@@ -1,0 +1,1359 @@
+openapi: 3.0.2
+info:
+  title: Text2Motion API
+  version: 0.1.0
+servers:
+  - url: https://api.text2motion.ai
+    description: Production environment
+paths:
+  /api/generate:
+    post:
+      tags:
+        - generate
+      summary: Generate
+      description: |-
+        Request text to animation generation.
+        ---
+        Parameters:
+            request_body (GenerateRequestBody): The request body.
+
+        Returns:
+            GenerateResponseBody: The generated animation response.
+      operationId: generate_api_generate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateRequestBody"
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateResponseBody"
+        "404":
+          description: Not found
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+      security:
+        - APIKeyHeader: []
+  /api/feedback:
+    post:
+      tags:
+        - feedback
+      summary: Feedback
+      description: |-
+        Provide feedback to a generate animation request.
+        ---
+        Parameters:
+            request_body (GenerateRequestBody): The request body.
+      operationId: feedback_api_feedback_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackRequestBody"
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        "404":
+          description: Not found
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+      security:
+        - APIKeyHeader: []
+components:
+  schemas:
+    Bone:
+      properties:
+        name:
+          type: string
+          maxLength: 256
+          minLength: 1
+          title: Name
+          description: Name of the bone.
+          example: Bone
+        matrix:
+          items:
+            type: number
+          type: array
+          maxItems: 16
+          minItems: 16
+          title: Matrix
+          description: 4 by 4 Matrix for the bone
+          example:
+            - 1
+            - 0
+            - 0
+            - 0
+            - 0
+            - 1
+            - 0
+            - 0
+            - 0
+            - 0
+            - 1
+            - 0
+            - 0.00212078
+            - 1.06488597
+            - 0.00347371
+            - 1
+        children:
+          anyOf:
+            - items:
+                $ref: "#/components/schemas/Bone"
+              type: array
+              maxItems: 50
+          title: Children
+          description: List of children bones.
+          nullable: true
+      type: object
+      required:
+        - name
+        - matrix
+      title: Bone
+      description: Schema for bone.
+    FeedbackRequestBody:
+      properties:
+        request_id:
+          type: string
+          pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$
+          title: Request Id
+          description: The request id of the generate request to provide feedback for.
+        rating:
+          type: integer
+          maximum: 10
+          minimum: 1
+          title: Rating
+          description: The rating to give for the given request id, [1, 10].
+      type: object
+      required:
+        - request_id
+        - rating
+      title: FeedbackRequestBody
+      description: Request schema for Feedback API.
+    GenerateRequestBody:
+      properties:
+        prompt:
+          type: string
+          maxLength: 2048
+          minLength: 3
+          title: Prompt
+          description: The text prompt to generate animation.
+          example: Run forward
+        target_skeleton:
+          allOf:
+            - $ref: "#/components/schemas/Skeleton"
+          description: The target skeleton for the animation.
+          example:
+            root:
+              children:
+                - children:
+                    - children:
+                        - children:
+                            - children:
+                                - children:
+                                    - children: []
+                                      matrix:
+                                        - 1
+                                        - 0
+                                        - 0
+                                        - 0
+                                        - 0
+                                        - 1
+                                        - 0
+                                        - 0
+                                        - 0
+                                        - 0
+                                        - 1
+                                        - 0
+                                        - 0
+                                        - 0.242230072617531
+                                        - 0.0976779162883759
+                                        - 1
+                                      name: mixamorigHeadTop_End
+                                  matrix:
+                                    - 1
+                                    - 0
+                                    - 0
+                                    - 0
+                                    - 0
+                                    - 1
+                                    - 0
+                                    - 0
+                                    - 0
+                                    - 0
+                                    - 1
+                                    - 0
+                                    - 0
+                                    - 0.0591683946549892
+                                    - 0.0238593183457851
+                                    - 1
+                                  name: mixamorigHead
+                              matrix:
+                                - 1
+                                - 0
+                                - 0
+                                - 0
+                                - 0
+                                - 0.9939151176460317
+                                - 0.11014871461841881
+                                - 0
+                                - 0
+                                - -0.11014871461841881
+                                - 0.9939151176460317
+                                - 0
+                                - 0
+                                - 0.162368446588516
+                                - 1.13957474567883e-8
+                                - 1
+                              name: mixamorigNeck
+                            - children:
+                                - children:
+                                    - children:
+                                        - children:
+                                            - children:
+                                                - children:
+                                                    - children:
+                                                        - children: []
+                                                          matrix:
+                                                            - 1
+                                                            - 0
+                                                            - 0
+                                                            - 0
+                                                            - 0
+                                                            - 0.9999999999999999
+                                                            - 1.070989164020376e-8
+                                                            - 0
+                                                            - 0
+                                                            - -1.070989164020376e-8
+                                                            - 0.9999999999999999
+                                                            - 0
+                                                            - 0.00142527290154248
+                                                            - 0.0540247224271297
+                                                            - 1.55134502466403e-10
+                                                            - 1
+                                                          name: mixamorigLeftHandThumb4
+                                                      matrix:
+                                                        - 1
+                                                        - -5.551115048692758e-17
+                                                        - -2.7755574999665833e-17
+                                                        - 0
+                                                        - 5.624073055958092e-17
+                                                        - 0.9996350043919673
+                                                        - 0.02701588406602946
+                                                        - 0
+                                                        - 2.6245761525797193e-17
+                                                        - -0.02701588406602946
+                                                        - 0.9996350043919673
+                                                        - 0
+                                                        - 0.0040914393030107
+                                                        - 0.0535006262362003
+                                                        - 2.90092422305932e-10
+                                                        - 1
+                                                      name: mixamorigLeftHandThumb3
+                                                  matrix:
+                                                    - 1
+                                                    - 5.551114947965913e-17
+                                                    - -5.551114891097295e-17
+                                                    - 0
+                                                    - -5.564754503394766e-17
+                                                    - 0.9999969739248086
+                                                    - -0.0024601099576679417
+                                                    - 0
+                                                    - 5.5374417393450215e-17
+                                                    - 0.0024601099576679417
+                                                    - 0.9999969739248086
+                                                    - 0
+                                                    - -0.005516710691154
+                                                    - 0.0342085957527161
+                                                    - 5.39429820256565e-11
+                                                    - 1
+                                                  name: mixamorigLeftHandThumb2
+                                              matrix:
+                                                - 0.7956960500046291
+                                                - 0.6056961367107477
+                                                - 1.0637577846361879e-8
+                                                - 0
+                                                - -0.5433589031315195
+                                                - 0.713804331764976
+                                                - 0.44186479604054735
+                                                - 0
+                                                - 0.26763578313453695
+                                                - -0.3515900817229031
+                                                - 0.897081662437863
+                                                - 0
+                                                - -0.0287214647978544
+                                                - 0.0263460483402014
+                                                - 0.0188943520188332
+                                                - 1
+                                              name: mixamorigLeftHandThumb1
+                                            - children:
+                                                - children:
+                                                    - children:
+                                                        - children: []
+                                                          matrix:
+                                                            - 1
+                                                            - 3.9898639957891114e-17
+                                                            - 1.561251125715083e-17
+                                                            - 0
+                                                            - -3.9898639937042087e-17
+                                                            - 1
+                                                            - -1.335405452884686e-9
+                                                            - 0
+                                                            - -1.561251131043169e-17
+                                                            - 1.335405452884686e-9
+                                                            - 1
+                                                            - 0
+                                                            - -0.00000977829404291697
+                                                            - 0.0401996076107025
+                                                            - 2.02703909213398e-10
+                                                            - 1
+                                                          name: mixamorigLeftHandIndex4
+                                                      matrix:
+                                                        - 1
+                                                        - 3.469447000950424e-18
+                                                        - 1.7347235169847398e-18
+                                                        - 0
+                                                        - -3.549656215654859e-18
+                                                        - 0.9988182776112791
+                                                        - 0.048600909208732945
+                                                        - 0
+                                                        - -1.5640552814547912e-18
+                                                        - -0.048600909208732945
+                                                        - 0.9988182776112791
+                                                        - 0
+                                                        - 0.00000408908363169758
+                                                        - 0.0439524687826633
+                                                        - -6.983810751926e-11
+                                                        - 1
+                                                      name: mixamorigLeftHandIndex3
+                                                  matrix:
+                                                    - 1
+                                                    - 1.734723507523458e-18
+                                                    - -8.673616921685707e-19
+                                                    - 0
+                                                    - -1.7242250547154698e-18
+                                                    - 0.999928466760018
+                                                    - 0.011960826206980578
+                                                    - 0
+                                                    - 8.880483732812365e-19
+                                                    - -0.011960826206980578
+                                                    - 0.999928466760018
+                                                    - 0
+                                                    - 0.00000568914174436941
+                                                    - 0.0477963909506798
+                                                    - 1.30964388639354e-11
+                                                    - 1
+                                                  name: mixamorigLeftHandIndex2
+                                              matrix:
+                                                - 0.9984008195099559
+                                                - 0.05653144039541397
+                                                - -1.4833731978343293e-9
+                                                - 0
+                                                - -0.05653137827991149
+                                                - 0.9983997225279553
+                                                - 0.001482389055202848
+                                                - 0
+                                                - 0.00008380306555130005
+                                                - -0.0014800183638021514
+                                                - 0.9999989012607928
+                                                - 0
+                                                - -0.0398862101137638
+                                                - 0.0957013294100761
+                                                - 0.000883691711351275
+                                                - 1
+                                              name: mixamorigLeftHandIndex1
+                                            - children:
+                                                - children:
+                                                    - children:
+                                                        - children: []
+                                                          matrix:
+                                                            - 1
+                                                            - 1.1449175005928886e-16
+                                                            - -4.857225580741855e-17
+                                                            - 0
+                                                            - -1.1449174876964953e-16
+                                                            - 0.9999999999999997
+                                                            - 2.65509445540602e-8
+                                                            - 0
+                                                            - 4.857225884728265e-17
+                                                            - -2.65509445540602e-8
+                                                            - 0.9999999999999997
+                                                            - 0
+                                                            - -0.0000481874121760484
+                                                            - 0.0382607653737068
+                                                            - 1.32735064259371e-11
+                                                            - 1
+                                                          name: mixamorigLeftHandMiddle4
+                                                      matrix:
+                                                        - 1
+                                                        - 3.009265538105056e-34
+                                                        - 8.673617092454982e-19
+                                                        - 0
+                                                        - -1.8615796972958419e-19
+                                                        - 0.9766964123034472
+                                                        - 0.21462552655518768
+                                                        - 0
+                                                        - -8.471490689196508e-19
+                                                        - -0.21462552655518768
+                                                        - 0.9766964123034472
+                                                        - 0
+                                                        - 0.0000530422985320911
+                                                        - 0.0533351078629494
+                                                        - -4.42813077872195e-11
+                                                        - 1
+                                                      name: mixamorigLeftHandMiddle3
+                                                  matrix:
+                                                    - 1
+                                                    - 6.93889383573534e-18
+                                                    - -1.7347234784824855e-18
+                                                    - 0
+                                                    - -7.072762549701929e-18
+                                                    - 0.9954368448172148
+                                                    - -0.09542268171774548
+                                                    - 0
+                                                    - 1.0646798232042136e-18
+                                                    - 0.09542268171774548
+                                                    - 0.9954368448172148
+                                                    - 0
+                                                    - -0.00000485463215227355
+                                                    - 0.0529406517744064
+                                                    - -1.93961114530738e-11
+                                                    - 1
+                                                  name: mixamorigLeftHandMiddle2
+                                              matrix:
+                                                - 0.9954805855672567
+                                                - 0.09496527908803984
+                                                - -1.2941486187811185e-9
+                                                - 0
+                                                - -0.09491761488802208
+                                                - 0.9949809424587464
+                                                - 0.03167918960185405
+                                                - 0
+                                                - 0.003008424211847163
+                                                - -0.03153601809981392
+                                                - 0.9994980885418271
+                                                - 0
+                                                - 0.00173672719392926
+                                                - 0.0944287478923798
+                                                - -0.00239750999026
+                                                - 1
+                                              name: mixamorigLeftHandMiddle1
+                                            - children:
+                                                - children:
+                                                    - children:
+                                                        - children: []
+                                                          matrix:
+                                                            - 1
+                                                            - 1.3183898413915514e-16
+                                                            - 9.540978775464883e-18
+                                                            - 0
+                                                            - -1.3183898420931964e-16
+                                                            - 1
+                                                            - 7.35401695095562e-9
+                                                            - 0
+                                                            - -9.540977805918758e-18
+                                                            - -7.35401695095562e-9
+                                                            - 1
+                                                            - 0
+                                                            - -0.00000928990539250663
+                                                            - 0.0354266837239265
+                                                            - -8.73870906192842e-11
+                                                            - 1
+                                                          name: mixamorigLeftHandRing4
+                                                      matrix:
+                                                        - 1
+                                                        - 1.3877787697605362e-17
+                                                        - -2.428612930728507e-17
+                                                        - 0
+                                                        - -1.0979649267971386e-17
+                                                        - 0.9933065232230578
+                                                        - 0.11550822884517592
+                                                        - 0
+                                                        - 2.5726569341097793e-17
+                                                        - -0.11550822884517592
+                                                        - 0.9933065232230578
+                                                        - 0
+                                                        - 0.000026738814995042
+                                                        - 0.0406473055481911
+                                                        - 3.26852503396147e-11
+                                                        - 1
+                                                      name: mixamorigLeftHandRing3
+                                                  matrix:
+                                                    - 1
+                                                    - -6.938893985738873e-18
+                                                    - 2.992397968943704e-17
+                                                    - 0
+                                                    - 1.056772384309471e-17
+                                                    - 0.9924029619489811
+                                                    - -0.12302991668260783
+                                                    - 0
+                                                    - -2.884295447722461e-17
+                                                    - 0.12302991668260783
+                                                    - 0.9924029619489811
+                                                    - 0
+                                                    - -0.0000174491233337903
+                                                    - 0.0429742187261581
+                                                    - 1.72643413454132e-10
+                                                    - 1
+                                                  name: mixamorigLeftHandRing2
+                                              matrix:
+                                                - 0.9994291325322447
+                                                - 0.03378474512131636
+                                                - -8.888978181992302e-10
+                                                - 0
+                                                - -0.033660303046399144
+                                                - 0.9957478570442869
+                                                - 0.08575073685251995
+                                                - 0
+                                                - 0.002897067782583346
+                                                - -0.0857017845147535
+                                                - 0.9963166217885955
+                                                - 0
+                                                - 0.0381494835019112
+                                                - 0.0940756499767303
+                                                - -0.000476453511510044
+                                                - 1
+                                              name: mixamorigLeftHandRing1
+                                          matrix:
+                                            - 0.991447870995953
+                                            - -0.05513468694869241
+                                            - -0.1182847623890668
+                                            - 0
+                                            - 0.055167049301490446
+                                            - 0.9984726225326455
+                                            - -0.0030031077936730085
+                                            - 0
+                                            - 0.1182696723160051
+                                            - -0.0035479966351708255
+                                            - 0.9929751739185841
+                                            - 0
+                                            - 3.74981816431141e-11
+                                            - 0.292730450630188
+                                            - 5.6104452680894e-12
+                                            - 1
+                                          name: mixamorigLeftHand
+                                      matrix:
+                                        - 0.9999156874569506
+                                        - 0.012985298792628731
+                                        - 9.940629097215242e-9
+                                        - 0
+                                        - -0.012946359591008453
+                                        - 0.9969172850633722
+                                        - -0.07738422823763776
+                                        - 0
+                                        - -0.0010048671923430575
+                                        - 0.07737770364814832
+                                        - 0.9970013447721954
+                                        - 0
+                                        - 3.90602758471026e-11
+                                        - 0.292298674583435
+                                        - 1.210723632461e-9
+                                        - 1
+                                      name: mixamorigLeftForeArm
+                                  matrix:
+                                    - 0.9999987733309347
+                                    - 0.0015663131015130275
+                                    - 4.014862662975443e-10
+                                    - 0
+                                    - -0.0015398188640198026
+                                    - 0.9830838074904606
+                                    - -0.1831498235640227
+                                    - 0
+                                    - -0.00028687035047262287
+                                    - 0.18314959889919136
+                                    - 0.9830850134103208
+                                    - 0
+                                    - -2.22392229631829e-10
+                                    - 0.142236158251762
+                                    - -1.943339933419e-9
+                                    - 1
+                                  name: mixamorigLeftArm
+                              matrix:
+                                - -0.029947608871174758
+                                - 0.0002718355120812088
+                                - -0.9995514399547423
+                                - 0
+                                - 0.9658035323759568
+                                - -0.25764738390500863
+                                - -0.029006548620685968
+                                - 0
+                                - -0.25753968987375225
+                                - -0.966238981369627
+                                - 0.007453374399738033
+                                - 0
+                                - 0.0705082714557648
+                                - 0.143950521945953
+                                - -0.00207335967570543
+                                - 1
+                              name: mixamorigLeftShoulder
+                            - children:
+                                - children:
+                                    - children:
+                                        - children:
+                                            - children:
+                                                - children:
+                                                    - children:
+                                                        - children: []
+                                                          matrix:
+                                                            - 1
+                                                            - 5.55111506842227e-17
+                                                            - -5.55111517782929e-17
+                                                            - 0
+                                                            - -5.55111517782929e-17
+                                                            - 0.9999999999999998
+                                                            - -1.970901664094526e-8
+                                                            - 0
+                                                            - 5.55111506842227e-17
+                                                            - 1.970901664094526e-8
+                                                            - 0.9999999999999998
+                                                            - 0
+                                                            - -0.000521870038937777
+                                                            - 0.0510049909353256
+                                                            - 1.61728730407873e-9
+                                                            - 1
+                                                          name: mixamorigRightHandThumb4
+                                                      matrix:
+                                                        - 1
+                                                        - -5.551115347166919e-17
+                                                        - -5.551115200786443e-17
+                                                        - 0
+                                                        - 5.860401456892136e-17
+                                                        - 0.99835340919542
+                                                        - 0.05736262057958904
+                                                        - 0
+                                                        - 5.223548251333661e-17
+                                                        - -0.05736262057958904
+                                                        - 0.99835340919542
+                                                        - 0
+                                                        - -0.00345714320428669
+                                                        - 0.0523918382823467
+                                                        - 2.66830973982835e-10
+                                                        - 1
+                                                      name: mixamorigRightHandThumb3
+                                                  matrix:
+                                                    - 1
+                                                    - 3.3703774026776627e-34
+                                                    - -2.775557517540267e-17
+                                                    - 0
+                                                    - -4.701820568083197e-19
+                                                    - 0.9998565063120596
+                                                    - -0.01694009388670592
+                                                    - 0
+                                                    - 2.7751592425496677e-17
+                                                    - 0.01694009388670592
+                                                    - 0.9998565063120596
+                                                    - 0
+                                                    - 0.00397901562973857
+                                                    - 0.037017684429884
+                                                    - -1.37807742994767e-9
+                                                    - 1
+                                                  name: mixamorigRightHandThumb2
+                                              matrix:
+                                                - 0.792178845540778
+                                                - -0.6102890233919052
+                                                - 1.1700801827441154e-8
+                                                - 0
+                                                - 0.5482050132259066
+                                                - 0.7115913947224659
+                                                - 0.43944165914901345
+                                                - 0
+                                                - -0.26818641939261
+                                                - -0.348116383195346
+                                                - 0.898271137096271
+                                                - 0
+                                                - 0.0293067097663879
+                                                - 0.0298913549631834
+                                                - 0.0203339997678995
+                                                - 1
+                                              name: mixamorigRightHandThumb1
+                                            - children:
+                                                - children:
+                                                    - children:
+                                                        - children: []
+                                                          matrix:
+                                                            - 1
+                                                            - 8.45677715678082e-18
+                                                            - 1.908195814205896e-17
+                                                            - 0
+                                                            - -8.456776733993061e-18
+                                                            - 0.9999999999999998
+                                                            - -2.2156413592711e-8
+                                                            - 0
+                                                            - -1.9081958329430803e-17
+                                                            - 2.2156413592711e-8
+                                                            - 0.9999999999999998
+                                                            - 0
+                                                            - -0.00000125803796890978
+                                                            - 0.0398715175688267
+                                                            - -1.65445324107338e-10
+                                                            - 1
+                                                          name: mixamorigRightHandIndex4
+                                                      matrix:
+                                                        - 1
+                                                        - 1.3010426235443754e-18
+                                                        - -4.336808867887186e-19
+                                                        - 0
+                                                        - -1.2937069341175178e-18
+                                                        - 0.9998637628005609
+                                                        - 0.016506236768842875
+                                                        - 0
+                                                        - 4.550971198121707e-19
+                                                        - -0.016506236768842875
+                                                        - 0.9998637628005609
+                                                        - 0
+                                                        - -0.00000216119019569305
+                                                        - 0.0449690110981464
+                                                        - 4.33715259887113e-12
+                                                        - 1
+                                                      name: mixamorigRightHandIndex3
+                                                  matrix:
+                                                    - 1
+                                                    - -1.5178830202106492e-18
+                                                    - -2.332798127810233e-28
+                                                    - 0
+                                                    - 1.517678080513553e-18
+                                                    - 0.9998649832048103
+                                                    - -0.01643214443877161
+                                                    - 0
+                                                    - 2.494207233771038e-20
+                                                    - 0.01643214443877161
+                                                    - 0.9998649832048103
+                                                    - 0
+                                                    - 0.0000034192178191006
+                                                    - 0.0489896051585674
+                                                    - 1.22707885519269e-11
+                                                    - 1
+                                                  name: mixamorigRightHandIndex2
+                                              matrix:
+                                                - 0.995511192745988
+                                                - -0.09464388373303127
+                                                - 2.504617274213042e-10
+                                                - 0
+                                                - 0.09463282286744955
+                                                - 0.9953948491351284
+                                                - 0.015287993717668973
+                                                - 0
+                                                - -0.0014469154119921912
+                                                - -0.015219368833891422
+                                                - 0.9998831317898861
+                                                - 0
+                                                - 0.0400396771728992
+                                                - 0.0979091078042984
+                                                - -0.000466333440272138
+                                                - 1
+                                              name: mixamorigRightHandIndex1
+                                            - children:
+                                                - children:
+                                                    - children:
+                                                        - children: []
+                                                          matrix:
+                                                            - 1
+                                                            - -1.3877787824869765e-17
+                                                            - 3.4694468837323993e-18
+                                                            - 0
+                                                            - 1.3877787790759155e-17
+                                                            - 1
+                                                            - 9.83171410950944e-9
+                                                            - 0
+                                                            - -3.4694470201748415e-18
+                                                            - -9.83171410950944e-9
+                                                            - 1
+                                                            - 0
+                                                            - 0.0000147053906403016
+                                                            - 0.03703523427248
+                                                            - 3.00836411337713e-10
+                                                            - 1
+                                                          name: mixamorigRightHandMiddle4
+                                                      matrix:
+                                                        - 1
+                                                        - 1.3877787615121805e-17
+                                                        - 1.7347234549812439e-18
+                                                        - 0
+                                                        - -1.3971483482489988e-17
+                                                        - 0.9856546762098009
+                                                        - 0.1687745805123786
+                                                        - 0
+                                                        - 6.323795175364365e-19
+                                                        - -0.1687745805123786
+                                                        - 0.9856546762098009
+                                                        - 0
+                                                        - -0.000010069351446873
+                                                        - 0.0526467561721802
+                                                        - -1.59898261298252e-10
+                                                        - 1
+                                                      name: mixamorigRightHandMiddle3
+                                                  matrix:
+                                                    - 1
+                                                    - -1.2037062152420224e-35
+                                                    - -8.673617688691011e-19
+                                                    - 0
+                                                    - -2.3572343247664613e-20
+                                                    - 0.999630635463699
+                                                    - -0.027177061444206577
+                                                    - 0
+                                                    - 8.670413962029438e-19
+                                                    - 0.027177061444206577
+                                                    - 0.999630635463699
+                                                    - 0
+                                                    - -0.00000463557580587803
+                                                    - 0.0536975860595703
+                                                    - 2.29618993090319e-12
+                                                    - 1
+                                                  name: mixamorigRightHandMiddle2
+                                              matrix:
+                                                - 0.9816537946598853
+                                                - -0.19067204626121376
+                                                - 6.224542539387534e-10
+                                                - 0
+                                                - 0.1905712795645913
+                                                - 0.9811350084129262
+                                                - -0.03250668420567098
+                                                - 0
+                                                - 0.006198115080637875
+                                                - 0.03191031005011372
+                                                - 0.9994715181202898
+                                                - 0
+                                                - -0.0024915065150708
+                                                - 0.100454643368721
+                                                - 0.000981787568889558
+                                                - 1
+                                              name: mixamorigRightHandMiddle1
+                                            - children:
+                                                - children:
+                                                    - children:
+                                                        - children: []
+                                                          matrix:
+                                                            - 1
+                                                            - -1.3183898420401563e-16
+                                                            - 4.9439618985930365e-17
+                                                            - 0
+                                                            - 1.3183898414445915e-16
+                                                            - 1
+                                                            - 1.204630617479552e-9
+                                                            - 0
+                                                            - -4.943961914474764e-17
+                                                            - -1.204630617479552e-9
+                                                            - 1
+                                                            - 0
+                                                            - 0.00000570806423638714
+                                                            - 0.0353982262313366
+                                                            - -6.08176217720136e-11
+                                                            - 1
+                                                          name: mixamorigRightHandRing4
+                                                      matrix:
+                                                        - 1
+                                                        - -6.938894368298316e-18
+                                                        - -5.421011160402484e-18
+                                                        - 0
+                                                        - 7.478595670589258e-18
+                                                        - 0.9942707746633039
+                                                        - 0.10689072515099297
+                                                        - 0
+                                                        - 4.648249547028857e-18
+                                                        - -0.10689072515099297
+                                                        - 0.9942707746633039
+                                                        - 0
+                                                        - -0.0000145988406075048
+                                                        - 0.0398492440581322
+                                                        - -2.61255184152986e-11
+                                                        - 1
+                                                      name: mixamorigRightHandRing3
+                                                  matrix:
+                                                    - 1
+                                                    - 3.898056424052635e-27
+                                                    - 4.336808811200729e-18
+                                                    - 0
+                                                    - 4.2836584181753888e-19
+                                                    - 0.9951098483803501
+                                                    - -0.09877444025184717
+                                                    - 0
+                                                    - -4.3156011598005934e-18
+                                                    - 0.09877444025184717
+                                                    - 0.9951098483803501
+                                                    - 0
+                                                    - 0.00000889077637111768
+                                                    - 0.043598435819149
+                                                    - -1.15926178378967e-10
+                                                    - 1
+                                                  name: mixamorigRightHandRing2
+                                              matrix:
+                                                - 0.9989108641069921
+                                                - -0.046659249875731786
+                                                - 2.0804100196031294e-10
+                                                - 0
+                                                - 0.04656676656438175
+                                                - 0.9969309228760178
+                                                - 0.06293068686808041
+                                                - 0
+                                                - -0.0029362988104676938
+                                                - -0.06286214678949513
+                                                - 0.9980178999921824
+                                                - 0
+                                                - -0.0375481657683849
+                                                - 0.099508248269558
+                                                - -0.00125391455367208
+                                                - 1
+                                              name: mixamorigRightHandRing1
+                                          matrix:
+                                            - 0.9899824635100496
+                                            - 0.09092706253543323
+                                            - 0.10801384487379789
+                                            - 0
+                                            - -0.09130309568332798
+                                            - 0.9958220651587316
+                                            - -0.001469363606247667
+                                            - 0
+                                            - -0.10769617497564393
+                                            - -0.008407354485432665
+                                            - 0.9941483038062793
+                                            - 0
+                                            - -1.01460350537819e-11
+                                            - 0.292696177959442
+                                            - -4.2334135329225e-12
+                                            - 1
+                                          name: mixamorigRightHand
+                                      matrix:
+                                        - 0.9994386862129774
+                                        - -0.03350093272863077
+                                        - 8.79772987490493e-9
+                                        - 0
+                                        - 0.03340626110042196
+                                        - 0.996614312670363
+                                        - -0.07512611700670561
+                                        - 0
+                                        - 0.0025167862401793673
+                                        - 0.07508394797509348
+                                        - 0.9971740402293368
+                                        - 0
+                                        - 2.33430191842743e-10
+                                        - 0.29235178232193
+                                        - 1.69657708021242e-11
+                                        - 1
+                                      name: mixamorigRightForeArm
+                                  matrix:
+                                    - 0.9999744396203862
+                                    - 0.00714983264563801
+                                    - 1.1437700603474099e-8
+                                    - 0
+                                    - -0.00702763316560173
+                                    - 0.9828839342407055
+                                    - -0.18409178371291532
+                                    - 0
+                                    - -0.001316236662039335
+                                    - 0.18408707817674883
+                                    - 0.982909057754301
+                                    - 0
+                                    - 2.22504376035104e-10
+                                    - 0.142236158251762
+                                    - -1.94332616665349e-9
+                                    - 1
+                                  name: mixamorigRightArm
+                              matrix:
+                                - -0.02902422541533589
+                                - -0.0002613922987725892
+                                - 0.999578664526501
+                                - 0
+                                - -0.965803635526651
+                                - -0.25774617270329925
+                                - -0.0281109285441129
+                                - 0
+                                - 0.25764493495122465
+                                - -0.966212615511811
+                                - 0.007228441604749336
+                                - 0
+                                - -0.0705082714557648
+                                - 0.143943458795547
+                                - -0.00200966745615005
+                                - 1
+                              name: mixamorigRightShoulder
+                          matrix:
+                            - 1
+                            - 0
+                            - 0
+                            - 0
+                            - 0
+                            - 1
+                            - 1.387778780781446e-17
+                            - 0
+                            - 0
+                            - -1.387778780781446e-17
+                            - 1
+                            - 0
+                            - 0
+                            - 0.144327461719513
+                            - 3.14339554385867e-10
+                            - 1
+                          name: mixamorigSpine2
+                      matrix:
+                        - 1
+                        - 0
+                        - 0
+                        - 0
+                        - 0
+                        - 0.9999999999999929
+                        - -1.193237864072216e-7
+                        - 0
+                        - 0
+                        - 1.193237864072216e-7
+                        - 0.9999999999999929
+                        - 0
+                        - 0
+                        - 0.126286625862122
+                        - 4.50004394858539e-10
+                        - 1
+                      name: mixamorigSpine1
+                  matrix:
+                    - 1
+                    - 0
+                    - 0
+                    - 0
+                    - 0
+                    - 0.9939151307967948
+                    - -0.11014859559060894
+                    - 0
+                    - 0
+                    - 0.11014859559060894
+                    - 0.9939151307967948
+                    - 0
+                    - 0
+                    - 0.107586972415447
+                    - -0.0119231110438704
+                    - 1
+                  name: mixamorigSpine
+                - children:
+                    - children:
+                        - children:
+                            - children:
+                                - children: []
+                                  matrix:
+                                    - 1
+                                    - -4.163336309021642e-17
+                                    - 5.789639601312224e-16
+                                    - 0
+                                    - 4.163336375667038e-17
+                                    - 1
+                                    - -1.15111475906815e-9
+                                    - 0
+                                    - -5.789639600832975e-16
+                                    - 1.15111475906815e-9
+                                    - 1
+                                    - 0
+                                    - 1.10519414800447e-11
+                                    - 0.0756773799657822
+                                    - 1.12109939387484e-10
+                                    - 1
+                                  name: mixamorigLeftToe_End
+                              matrix:
+                                - 0.9896801574134575
+                                - -4.420715182806845e-11
+                                - -0.14329405567011144
+                                - 0
+                                - 0.07495131216555856
+                                - 0.8522961875715371
+                                - 0.5176615832058922
+                                - 0
+                                - 0.12212897770410587
+                                - -0.5230594745557811
+                                - 0.8435006250548012
+                                - 0
+                                - -8.05169245079312e-13
+                                - 0.202908679842949
+                                - -5.50102807750363e-9
+                                - 1
+                              name: mixamorigLeftToeBase
+                          matrix:
+                            - 0.9999999168153643
+                            - -1.7307722138348944e-9
+                            - 0.0004078838780730805
+                            - 0
+                            - -0.00035540864926594687
+                            - 0.4906625156055934
+                            - 0.8713496022271782
+                            - 0
+                            - -0.00020013482960715834
+                            - -0.8713496747097399
+                            - 0.4906624747893973
+                            - 0
+                            - 1.74984665646249e-10
+                            - 0.425308257341385
+                            - 2.35913760748829e-10
+                            - 1
+                          name: mixamorigLeftFoot
+                      matrix:
+                        - 0.9999550846632846
+                        - 0.009477798210351591
+                        - 8.321257090771351e-11
+                        - 0
+                        - -0.009474809005953272
+                        - 0.9996397088685365
+                        - -0.02511335243598369
+                        - 0
+                        - -0.0002380193623439617
+                        - 0.025112224460550624
+                        - 0.9996846100393862
+                        - 0
+                        - 2.34387675934755e-10
+                        - 0.463325500488281
+                        - -2.29901458981274e-10
+                        - 1
+                      name: mixamorigLeftLeg
+                  matrix:
+                    - -0.9995686930583119
+                    - 0.029339366030198037
+                    - 0.0011882894383121205
+                    - 0
+                    - -0.02936341994460357
+                    - -0.9987498666374592
+                    - -0.04045091003914963
+                    - 0
+                    - -7.324685432838485e-11
+                    - -0.040468359922099385
+                    - 0.999180820350421
+                    - 0
+                    - 0.117102049291134
+                    - -0.0598404668271542
+                    - 0.00698971142992377
+                    - 1
+                  name: mixamorigLeftUpLeg
+                - children:
+                    - children:
+                        - children:
+                            - children:
+                                - children: []
+                                  matrix:
+                                    - 1
+                                    - -1.3877787824901147e-17
+                                    - -1.3487475025543868e-16
+                                    - 0
+                                    - 1.3877787790727774e-17
+                                    - 1
+                                    - -2.53371157388216e-10
+                                    - 0
+                                    - 1.3487475025895493e-16
+                                    - 2.53371157388216e-10
+                                    - 1
+                                    - 0
+                                    - -2.46967835071388e-10
+                                    - 0.0751242190599442
+                                    - 9.0652603479402e-11
+                                    - 1
+                                  name: mixamorigRightToe_End
+                              matrix:
+                                - 0.9894166466222347
+                                - -8.927762973343079e-9
+                                - 0.14510237424737388
+                                - 0
+                                - -0.07548679130862589
+                                - 0.8540254001538392
+                                - 0.5147255142922109
+                                - 0
+                                - -0.12392111745038853
+                                - -0.520231305022538
+                                - 0.8449869469038356
+                                - 0
+                                - -3.82746265237266e-11
+                                - 0.203901320695877
+                                - 1.59822832745959e-9
+                                - 1
+                              name: mixamorigRightToeBase
+                          matrix:
+                            - 0.9999999563815436
+                            - 3.963324213089592e-10
+                            - -0.00029535896003626616
+                            - 0
+                            - 0.00025769674535626084
+                            - 0.4886367792276284
+                            - 0.8724872959197005
+                            - 0
+                            - 0.0001443236041216135
+                            - -0.8724873339761923
+                            - 0.4886367579139431
+                            - 0
+                            - -6.47327913494422e-10
+                            - 0.425284564495087
+                            - -2.86193824194925e-9
+                            - 1
+                          name: mixamorigRightFoot
+                      matrix:
+                        - 0.9999551330082671
+                        - -0.009472695859915546
+                        - -9.540941120652052e-11
+                        - 0
+                        - 0.009470989651113872
+                        - 0.9997750226789698
+                        - -0.018979050672269387
+                        - 0
+                        - 0.00017978287725770546
+                        - 0.018978199138422327
+                        - 0.999819881589314
+                        - 0
+                        - -8.43054653865138e-11
+                        - 0.463431000709534
+                        - -8.3708978637631e-10
+                        - 1
+                      name: mixamorigRightLeg
+                  matrix:
+                    - -0.9995689686842679
+                    - -0.029326000541318776
+                    - -0.0013429413819412675
+                    - 0
+                    - 0.02935673345767133
+                    - -0.9985225418757833
+                    - -0.04572588493790828
+                    - 0
+                    - 6.432772153494581e-11
+                    - -0.045745601372264834
+                    - 0.9989531219852997
+                    - 0
+                    - -0.117102049291134
+                    - -0.0598404668271542
+                    - 0.00819591153413057
+                    - 1
+                  name: mixamorigRightUpLeg
+              matrix:
+                - 1
+                - 0
+                - 0
+                - 0
+                - 0
+                - 1
+                - 0
+                - 0
+                - 0
+                - 0
+                - 1
+                - 0
+                - 0.00212078099139035
+                - 1.06488597393036
+                - 0.00347370933741331
+                - 1
+              name: mixamorigHips
+            world_matrix:
+              - 100
+              - 0
+              - 0
+              - 0
+              - 0
+              - 99.9999999999999
+              - 0.0000043711388286738005
+              - 0
+              - 0
+              - -0.0000043711388286738005
+              - 99.9999999999999
+              - 0
+              - 0
+              - 0
+              - 0
+              - 1
+      type: object
+      required:
+        - prompt
+        - target_skeleton
+      title: GenerateRequestBody
+      description: Request schema for Generate API.
+    GenerateResponseBody:
+      properties:
+        result:
+          anyOf:
+            - type: string
+          title: Result
+          description: Generated animation result.
+          example: example_output_here
+          nullable: true
+        request_id:
+          anyOf:
+            - type: string
+          title: Request Id
+          description: Request ID for the generated animation.
+          example: request_id_here
+          nullable: true
+      type: object
+      title: GenerateResponseBody
+      description: Response schema for Generate API.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: "#/components/schemas/ValidationError"
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Skeleton:
+      properties:
+        world_matrix:
+          items:
+            type: number
+          type: array
+          maxItems: 16
+          minItems: 16
+          title: World Matrix
+          description: 4 by 4 Matrix for the skeleton position in the world.
+          example:
+            - 0
+            - 0
+            - 0
+            - 0
+            - 99.9999999999999
+            - 0.0000043711388286738005
+            - 0
+            - 0
+            - -0.0000043711388286738005
+            - 99.9999999999999
+            - 0
+            - 0
+            - 0
+            - 0
+            - 1
+        root:
+          allOf:
+            - $ref: "#/components/schemas/Bone"
+          description: Root bone of the skeleton.
+      type: object
+      required:
+        - world_matrix
+        - root
+      title: Skeleton
+      description: Schema for skeleton.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: x-apikey

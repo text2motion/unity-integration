@@ -1,0 +1,27 @@
+{
+  "name": "ai.text2motion.unity.client",
+  "displayName": "Text2Motion",
+  "version": "1.0.0",
+  "unity": "2022.3",
+  "unityRelease": "4f1",
+  "description": "Text2Motion's unity integration client, can be use to make request to Text2Motion's API for generating Animation Clip on a given humanoid model.",
+  "keywords": [
+    "Generative AI",
+    "animation"
+  ],
+  "author": {
+    "name": "Text2Motion",
+    "email": "support@text2motion.ai",
+    "url": "https://www.text2motion.ai/"
+  },
+  "dependencies": {
+    "ai.text2motion.unity.csharpclient": "1.0.0"
+  },
+  "samples": [
+    {
+      "displayName": "Example Maximorig model",
+      "description": "Contains example Maximorig models in fbx format that can be use to apply generated animation from Text2Motion.",
+      "path": "Samples~/Models"
+    }
+  ]
+}
