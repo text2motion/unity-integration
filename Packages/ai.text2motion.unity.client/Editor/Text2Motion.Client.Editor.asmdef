@@ -1,0 +1,16 @@
+{
+    "name": "Text2Motion.Client.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:8db28c9734bcfa3cd909caffce9d1f6a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
